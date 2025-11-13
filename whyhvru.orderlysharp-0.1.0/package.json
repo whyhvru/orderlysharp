@@ -1,0 +1,81 @@
+{
+    "name": "orderly-sharp",
+    "displayName": "OrderlySharp",
+    "description": "Professional C# member ordering validation with high performance and accuracy",
+    "version": "0.1.0",
+    "publisher": "whyhvru",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Linters",
+        "Formatters"
+    ],
+    "keywords": [
+        "csharp",
+        "clean code",
+        "code quality",
+        "unity",
+        "code analysis",
+        "orderly",
+        "member order"
+    ],
+    "activationEvents": [
+        "onLanguage:csharp"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "OrderlySharp",
+            "properties": {
+                "orderlySharp.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable/disable OrderlySharp validation"
+                },
+                "orderlySharp.memberOrder": {
+                    "type": "array",
+                    "default": [
+                        "public const",
+                        "private const",
+                        "readonly field",
+                        "serialize field",
+                        "private field",
+                        "public field",
+                        "property",
+                        "event",
+                        "unity method",
+                        "public method",
+                        "private method"
+                    ],
+                    "description": "Defines the required order of class members"
+                },
+                "orderlySharp.performance.debounceTimeout": {
+                    "type": "number",
+                    "default": 300,
+                    "description": "Debounce timeout in milliseconds for validation"
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "orderlySharp.validateCurrentFile",
+                "title": "OrderlySharp: Validate Current File",
+                "category": "OrderlySharp"
+            },
+            {
+                "command": "orderlySharp.toggle",
+                "title": "OrderlySharp: Toggle Extension",
+                "category": "OrderlySharp"
+            }
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/whyhvru/orderly-sharp"
+    },
+    "bugs": {
+        "url": "https://github.com/whyhvru/orderly-sharp/issues"
+    },
+    "icon": "images/icon.png"
+}
