@@ -17,12 +17,14 @@ const MemberType = Object.freeze({
 
 const UNITY_METHODS = new Set([
     'Awake', 'Start', 'Update', 'FixedUpdate', 'LateUpdate',
-    'OnEnable', 'OnDisable', 'OnDestroy', 'OnValidate',
+    'OnEnable', 'OnDisable', /* 'OnDestroy' */, 'OnValidate',  // OnDestroy method may be located below
     'OnTriggerEnter', 'OnTriggerEnter2D', 'OnTriggerExit', 'OnTriggerExit2D',
     'OnTriggerStay', 'OnTriggerStay2D', 'OnCollisionEnter', 'OnCollisionEnter2D',
     'OnCollisionExit', 'OnCollisionExit2D', 'OnCollisionStay', 'OnCollisionStay2D',
     'OnMouseDown', 'OnMouseUp', 'OnMouseEnter', 'OnMouseExit', 'OnMouseOver'
 ]);
+
+const EXCLUDED_METHODS = new Set(['Dispose']);  // Dispose method may be located below
 
 const CONST_REGEX = /^(public|private)\s+const\s+/;
 const READONLY_FIELD_REGEX = /^(?:\w+\s+)*readonly\s+\w/;
@@ -203,11 +205,14 @@ class PerformanceAnalyzer {
             const memberType = this._classifyMember(fullDeclaration, pendingSerializeField);
             if (memberType) {
                 const memberName = this._extractMemberName(fullDeclaration, memberType);
-                members.push({
-                    name: memberName,
-                    type: memberType,
-                    line: currentLine
-                });
+
+                if (!this._isExcludedMember(memberType, memberName)) {
+                    members.push({
+                        name: memberName,
+                        type: memberType,
+                        line: currentLine
+                    });
+                }
             }
 
             if (pendingSerializeField) {
@@ -338,6 +343,14 @@ class PerformanceAnalyzer {
             default:
                 return 'unknown';
         }
+    }
+
+    _isExcludedMember(memberType, memberName) {
+        if ((memberType === MemberType.PublicMethod || memberType === MemberType.PrivateMethod) &&
+            EXCLUDED_METHODS.has(memberName)) {
+            return true;
+        }
+        return false;
     }
 
     _validateMemberOrder(members, lines) {
